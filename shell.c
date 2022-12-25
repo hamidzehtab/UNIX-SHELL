@@ -7,6 +7,8 @@
 #include<sys/wait.h>
 #include<readline/readline.h>
 #include<readline/history.h>
+#include <errno.h>
+
 
 #define MAXCOM 1000 // max number of letters to be supported
 #define MAXLIST 100 // max number of commands to be supported
@@ -36,7 +38,7 @@ int takeInput(char* str)
 {
 	char* buf;
 
-	buf = readline(">>> ");
+	buf = readline("\0");
 	if (strlen(buf) != 0) {
 		add_history(buf);
 		strcpy(str, buf);
@@ -51,7 +53,7 @@ void printDir()
 {
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
-	printf("\nDir: %s", cwd);
+	printf("\nDir: %s$ ", cwd);
 }
 
 // Function where the system command is executed
@@ -61,7 +63,7 @@ void execArgs(char** parsed)
 	pid_t pid = fork();
 
 	if (pid == -1) {
-		printf("\nFailed forking child..");
+		fprintf(stderr, "\nFailed forking child..: %s \n", strerror(errno));
 		return;
 	} else if (pid == 0) {
 		if (execvp(parsed[0], parsed) < 0) {
@@ -83,12 +85,13 @@ void execArgsPiped(char** parsed, char** parsedpipe)
 	pid_t p1, p2;
 
 	if (pipe(pipefd) < 0) {
-		printf("\nPipe could not be initialized");
+		fprintf(stderr, "\nPipe could not be initialized: %s \n", strerror(errno));
 		return;
 	}
 	p1 = fork();
 	if (p1 < 0) {
-		printf("\nCould not fork");
+		fprintf(stderr, "\nPipe could not be initialized: %s \n", strerror(errno));
+		
 		return;
 	}
 
@@ -108,7 +111,7 @@ void execArgsPiped(char** parsed, char** parsedpipe)
 		p2 = fork();
 
 		if (p2 < 0) {
-			printf("\nCould not fork");
+		fprintf(stderr, "\nPipe could not be initialized: %s \n", strerror(errno));
 			return;
 		}
 
@@ -161,7 +164,7 @@ int numOfLines(char parsed[])
 		// Check if file exists
 		if (fp == NULL)
 		{
-			printf("Could not open file %s", parsed);
+			fprintf(stderr, "Cannot open file: %s \n", strerror(errno));
 			return 0;
 		}
 		// Extract characters from file and store in character c
@@ -183,7 +186,7 @@ int head (char parsed[])
 		myfile = fopen(parsed, "r");
 		if (myfile == NULL)
 		{
-			printf("Cannot open file \n");
+			fprintf(stderr, "Cannot open file: %s \n", strerror(errno));
 			exit(0);
 		}
 		// Read the first 10 lines from file
@@ -213,7 +216,7 @@ int mostFrequentWord(char parsed[])
 		
 	//If file doesn't exist  
 	if (file == NULL){  
-			printf("File not found");  
+			fprintf(stderr, "Cannot open file: %s \n", strerror(errno));
 			exit(EXIT_FAILURE);  
 	}  
 		
@@ -280,7 +283,7 @@ int removeWhiteSpace(char parsed[])
 			}while (fileChar != EOF);
 			fclose(filePointer);
 		}else{
-			printf("\nfile cannot be opened");
+			fprintf(stderr, "Cannot open file: %s \n", strerror(errno));
 		}
 		return 1;
 }
@@ -294,7 +297,7 @@ int showUncommented(char parsed[])
 	mfile = fopen(parsed, "r");
 	if (mfile == NULL)
 	{
-		printf("Cannot open file \n");
+		fprintf(stderr, "Cannot open file: %s \n", strerror(errno));
 		exit(0);
 	}
 	// Extract characters from file and store in character c
@@ -435,12 +438,23 @@ int processString(char* str, char** parsed, char** parsedpipe)
 		return 1 + piped;
 }
 
+void sigintHandler(int sig_num)
+{
+    /* Reset handler to catch SIGINT next time.
+    Refer http://en.cppreference.com/w/c/program/signal */
+    signal(SIGINT, sigintHandler);
+    //printf("\n Cannot be terminated using Ctrl+C \n");
+    fflush(stdout);
+	printDir();
+}
+
 int main()
 {
 	char inputString[MAXCOM], *parsedArgs[MAXLIST];
 	char* parsedArgsPiped[MAXLIST];
 	int execFlag = 0;
 	init_shell();
+	signal(SIGINT, sigintHandler);
 
 	while (1) {
 		// print shell line
