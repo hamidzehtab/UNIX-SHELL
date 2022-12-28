@@ -25,9 +25,10 @@ void init_shell()
 	clear();
 	printf("\n\n\n\n******************"
 		"************************");
-	printf("\n\n\n\t**** Operating System Project ****");
+	printf("\n\n\n\t************ Operating System Project  - Simple Unix Shell    ****");
 	printf("\n\n\t- Developed by -");
 	printf("\n\n\t- Hamid Zehtab (The Honey Badger) and Ali.M Tabatabaei (Ali Ninja) -");
+	printf("\n\n\t- Autumn 2022 -");
 	printf("\n\n\n\n*******************"
 		"***********************");
 	char* username = getenv("USER");
