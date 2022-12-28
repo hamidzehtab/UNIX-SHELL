@@ -54,14 +54,6 @@ int takeInput(char* str)
 	}
 }
 
-// Function to print Current Directory.
-/*void printDir()
-{
-	char cwd[1024];
-	getcwd(cwd, sizeof(cwd));
-	printf("\nDir: %s$ ", cwd);
-}*/
-
 // Function where the system command is executed
 void execArgs(char** parsed)
 {
@@ -73,7 +65,7 @@ void execArgs(char** parsed)
 		return;
 	} else if (pid == 0) {
 		if (execvp(parsed[0], parsed) < 0) {
-			printf("\nCould not execute command..");
+			printf("\nCould not execute command..\n");
 		}
 		exit(0);
 	} else {
@@ -231,7 +223,7 @@ int mostFrequentWord(char parsed[])
 	//Since, C doesn't provide in-built function,   
 	//following code will split content of file into words  
 	while ((read = getline(&line, &len, file)) != -1) {  
-			printf ("%s", line);
+			//printf ("%s", line);
 		for(k=0; line[k]!='\0'; k++){  
 			//Here, i represents row and j represents column of two-dimensional array words   
 			if(line[k] != ' ' && line[k] != '\n' && line[k] != ',' && line[k] != '.' ){  
@@ -267,7 +259,7 @@ int mostFrequentWord(char parsed[])
 		}  
 	}  
 	
-	printf("Most repeated word: %s", word);  
+	printf("Most repeated word: %s\n", word);  
 	fclose(file);  
 	return 1;
 }
@@ -428,7 +420,7 @@ int processString(char* str, char** parsed, char** parsedpipe)
 
 	char* strpiped[2];
 	int piped = 0;
-
+	//int hasexecuted;
 	piped = parsePipe(str, strpiped);
 
 	if (piped) {
@@ -439,11 +431,11 @@ int processString(char* str, char** parsed, char** parsedpipe)
 
 		parseSpace(str, parsed);
 	}
-
 	if (ownCmdHandler(parsed))
 		return 0;
 	else
 		return 1 + piped;
+	//return hasexecuted + piped;
 }
 
 /*void sigintHandler(int sig_num)
@@ -457,7 +449,7 @@ int processString(char* str, char** parsed, char** parsedpipe)
 
 void handle_signals(int signo) {
   if (signo == SIGINT) {
-    printf("You pressed Ctrl+C\n");
+    printf("\n");
     siglongjmp(ctrlc_buf, 1);
   }
 }
@@ -471,7 +463,7 @@ int main()
 	//signal(SIGINT, sigintHandler);
 	if (signal(SIGINT, handle_signals) == SIG_ERR) {
     printf("failed to register interrupts with kernel\n");
-  }
+  	}
 	while (1) {
 		while ( sigsetjmp( ctrlc_buf, 1 ) != 0 );
 		// print shell line
