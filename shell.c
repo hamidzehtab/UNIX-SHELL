@@ -39,12 +39,12 @@ void init_shell()
 int takeInput(char* str)
 {
 	char* buf;
-	char cwd[1024];
-	getcwd(cwd, sizeof(cwd));
-	char temp[2048];
-	snprintf(temp, sizeof(temp), "%s$ ", cwd);
+	//char cwd[1024];
+	//getcwd(cwd, sizeof(cwd));
+	//char temp[2048];
+	//snprintf(temp, sizeof(temp), "%s$ ", cwd);
 	//= printf("\nDir: %s$ ", cwd);
-	buf = readline(temp);
+	buf = readline(" ");
 	if (strlen(buf) != 0) {
 		add_history(buf);
 		strcpy(str, buf);
@@ -54,6 +54,14 @@ int takeInput(char* str)
 	}
 }
 
+void printDir()
+{
+	char* buf;
+	char cwd[1024];
+	getcwd(cwd, sizeof(cwd));
+	//char temp[2048];
+	printf("\nDir: %s$ ", cwd);
+}
 // Function where the system command is executed
 void execArgs(char** parsed)
 {
@@ -485,25 +493,10 @@ int processString(char* str, char** parsed, char** parsedpipe)
 
 		parseSpace(str, parsed);
 	}
-	if(isSelfDefined(parsed)){
-		pid_t pid = fork();
-
-		if (pid == -1) {
-			fprintf(stderr, "\nFailed forking child..: %s \n", strerror(errno));
-			return;
-		} else if (pid == 0) {
-			if (ownCmdHandler(parsed) == 0) {
-				printf("\nCould not execute command..\n");
-			}
-			exit(0);
-		} else {
-			// waiting for child to terminate
-			wait(NULL);
-			return 0;
-		}
-		//if (ownCmdHandler(parsed))
-			//return 0;
-	}else
+	
+	if (ownCmdHandler(parsed))
+		return 0;
+	else
 		return 1 + piped;
 	//return hasexecuted + piped;
 }
@@ -537,7 +530,7 @@ int main()
 	while (1) {
 		while ( sigsetjmp( ctrlc_buf, 1 ) != 0 );
 		// print shell line
-		//printDir();
+		printDir();
 		// take input
 		if (takeInput(inputString))
 			continue;
