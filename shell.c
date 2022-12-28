@@ -336,7 +336,7 @@ int showUncommented(char parsed[])
 	//FILE *mfile;
 	mfile = fopen(parsed, "r");
 	fgets(line, 200, mfile);
-	printf("first line %s\n", line);
+	//printf("first line %s\n", line);
 	//while (line != EOF || feof(mfile))
 	for ( i = 0; i < counter; i++)
 	
@@ -428,6 +428,32 @@ int parsePipe(char* str, char** strpiped)
 	}
 }
 
+int isSelfDefined(char** parsed)
+{
+	int NoOfOwnCmds = 9, i, switchOwnArg = 0;
+	char* ListOfOwnCmds[NoOfOwnCmds];
+	ListOfOwnCmds[0] = "exit";
+	ListOfOwnCmds[1] = "cd";
+	ListOfOwnCmds[2] = "help";
+	ListOfOwnCmds[3] = "hello";
+	ListOfOwnCmds[4] = "head";
+	ListOfOwnCmds[5] = "rws";
+	ListOfOwnCmds[6] = "nl";
+	ListOfOwnCmds[7] = "suc";
+	ListOfOwnCmds[8] = "mfw";
+
+	for (i = 0; i < NoOfOwnCmds; i++) {
+		if (strcmp(parsed[0], ListOfOwnCmds[i]) == 0) {
+			switchOwnArg = i + 1;
+			break;
+		}
+	}
+	if(switchOwnArg != 0)
+		return 1;
+	else
+		return 0;
+}
+
 // function for parsing command words
 void parseSpace(char* str, char** parsed)
 {
@@ -459,9 +485,25 @@ int processString(char* str, char** parsed, char** parsedpipe)
 
 		parseSpace(str, parsed);
 	}
-	if (ownCmdHandler(parsed))
-		return 0;
-	else
+	if(isSelfDefined(parsed)){
+		pid_t pid = fork();
+
+		if (pid == -1) {
+			fprintf(stderr, "\nFailed forking child..: %s \n", strerror(errno));
+			return;
+		} else if (pid == 0) {
+			if (ownCmdHandler(parsed) == 0) {
+				printf("\nCould not execute command..\n");
+			}
+			exit(0);
+		} else {
+			// waiting for child to terminate
+			wait(NULL);
+			return 0;
+		}
+		//if (ownCmdHandler(parsed))
+			//return 0;
+	}else
 		return 1 + piped;
 	//return hasexecuted + piped;
 }
