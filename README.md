@@ -11,7 +11,7 @@ compile the shell.c file using :
 
 Run an instance of the program :
 
-Specific Command :
+Specific Commands :
 1-
 2-
 3-
