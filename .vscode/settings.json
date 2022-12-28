@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "types.h": "c",
+        "readline.h": "c",
+        "errno.h": "c"
+    }
+}
