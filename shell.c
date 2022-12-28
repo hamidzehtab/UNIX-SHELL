@@ -24,8 +24,9 @@ void init_shell()
 	clear();
 	printf("\n\n\n\n******************"
 		"************************");
-	printf("\n\n\n\t****MY SHELL****");
-	printf("\n\n\t-USE AT YOUR OWN RISK-");
+	printf("\n\n\n\t**** Operating System Project ****");
+	printf("\n\n\t- Developed by -");
+	printf("\n\n\t- Hamid Zehtab (The Honey Badger) and Ali.M Tabatabaei (Ali Ninja) -");
 	printf("\n\n\n\n*******************"
 		"***********************");
 	char* username = getenv("USER");
