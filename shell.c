@@ -8,11 +8,13 @@
 #include<readline/readline.h>
 #include<readline/history.h>
 #include <errno.h>
+#include <signal.h>
+#include <setjmp.h>
 
 
 #define MAXCOM 1000 // max number of letters to be supported
 #define MAXLIST 100 // max number of commands to be supported
-
+sigjmp_buf ctrlc_buf;
 // Clearing the shell using escape sequences
 #define clear() printf("\033[H\033[J")
 
@@ -30,15 +32,19 @@ void init_shell()
 	printf("\n\n\nUSER is: @%s", username);
 	printf("\n");
 	sleep(1);
-	clear();
+	//clear();
 }
 
 // Function to take input
 int takeInput(char* str)
 {
 	char* buf;
-
-	buf = readline("\0");
+	char cwd[1024];
+	getcwd(cwd, sizeof(cwd));
+	char temp[2048];
+	snprintf(temp, sizeof(temp), "%s$ ", cwd);
+	//= printf("\nDir: %s$ ", cwd);
+	buf = readline(temp);
 	if (strlen(buf) != 0) {
 		add_history(buf);
 		strcpy(str, buf);
@@ -49,12 +55,12 @@ int takeInput(char* str)
 }
 
 // Function to print Current Directory.
-void printDir()
+/*void printDir()
 {
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
 	printf("\nDir: %s$ ", cwd);
-}
+}*/
 
 // Function where the system command is executed
 void execArgs(char** parsed)
@@ -176,6 +182,7 @@ int numOfLines(char parsed[])
 		printf("The file %s has %d lines\n ", parsed, count);
 		return 1;
 }
+
 int head (char parsed[])
 {
 	FILE *myfile;
@@ -203,6 +210,7 @@ int head (char parsed[])
 		fclose(myfile);
 		return 1;
 }
+
 int mostFrequentWord(char parsed[])
 {
 	FILE *file;  
@@ -438,14 +446,20 @@ int processString(char* str, char** parsed, char** parsedpipe)
 		return 1 + piped;
 }
 
-void sigintHandler(int sig_num)
+/*void sigintHandler(int sig_num)
 {
-    /* Reset handler to catch SIGINT next time.
-    Refer http://en.cppreference.com/w/c/program/signal */
+    
     signal(SIGINT, sigintHandler);
     //printf("\n Cannot be terminated using Ctrl+C \n");
     fflush(stdout);
 	printDir();
+}*/
+
+void handle_signals(int signo) {
+  if (signo == SIGINT) {
+    printf("You pressed Ctrl+C\n");
+    siglongjmp(ctrlc_buf, 1);
+  }
 }
 
 int main()
@@ -454,11 +468,14 @@ int main()
 	char* parsedArgsPiped[MAXLIST];
 	int execFlag = 0;
 	init_shell();
-	signal(SIGINT, sigintHandler);
-
+	//signal(SIGINT, sigintHandler);
+	if (signal(SIGINT, handle_signals) == SIG_ERR) {
+    printf("failed to register interrupts with kernel\n");
+  }
 	while (1) {
+		while ( sigsetjmp( ctrlc_buf, 1 ) != 0 );
 		// print shell line
-		printDir();
+		//printDir();
 		// take input
 		if (takeInput(inputString))
 			continue;
