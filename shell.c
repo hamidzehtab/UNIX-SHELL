@@ -1,4 +1,5 @@
-// C Program to design a shell in Linux
+// Operating System First Project - Simple UNIX Shell
+// Developed By Ali.M Tabatabaei and Hamid Zehtab
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
