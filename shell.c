@@ -537,7 +537,7 @@ int main()
 	if (signal(SIGINT, handle_signals) == SIG_ERR) {
     printf("failed to register interrupts with kernel\n");
   	}
-	// we'll use the following loop for managin ctrl+c signaling 
+	// we'll use the following loop for managing ctrl+c signaling 
 	while (1) {
 		while ( sigsetjmp( ctrlc_buf, 1 ) != 0 );
 		// print shell line
