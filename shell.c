@@ -19,7 +19,7 @@ sigjmp_buf ctrlc_buf;
 // Clearing the shell using escape sequences
 #define clear() printf("\033[H\033[J")
 
-// Greeting shell during startup
+// Initial Welcome and Greeting Shell :)
 void init_shell()
 {
 	clear();
