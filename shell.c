@@ -20,7 +20,7 @@ sigjmp_buf ctrlc_buf;
 #define clear() printf("\033[H\033[J")
 
 // Initial Welcome and Greeting Shell :)
-void init_shell()
+void welcome_shell()
 {
 	clear();
 	printf("\n\n\n\n******************"
@@ -532,7 +532,7 @@ int main()
 	char inputString[MAXCOM], *parsedArgs[MAXLIST];
 	char* parsedArgsPiped[MAXLIST];
 	int execFlag = 0;
-	init_shell();
+	welcome_shell();
 	//signal(SIGINT, sigintHandler);
 	if (signal(SIGINT, handle_signals) == SIG_ERR) {
     printf("failed to register interrupts with kernel\n");
