@@ -136,10 +136,13 @@ void execArgsPiped(char** parsed, char** parsedpipe)
 				exit(0);
 			}
 		} else {
-			return;
+			//return;
+			//kill(p1, SIGKILL);
+			
 			// parent executing, waiting for two children
 			//printf("\nExecuting command");
 			wait(NULL);
+			kill(p2, SIGKILL);
 			wait(NULL);
 		}
 	}
@@ -587,7 +590,7 @@ int main()
 				//ispiped = 1;
 			}
 				
-		}
+		}else printDir();
 			//ispiped = 0;
 		
 	}
