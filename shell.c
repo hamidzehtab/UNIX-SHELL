@@ -63,7 +63,7 @@ void printDir()
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
 	//char temp[2048];
-	printf("\nDir: %s$ ", cwd);
+	printf("Dir: %s$ ", cwd);
 }
 // Function where the system command is executed
 void execArgs(char** parsed)
