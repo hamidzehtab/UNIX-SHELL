@@ -78,6 +78,7 @@ void execArgs(char** parsed)
 		if (execvp(parsed[0], parsed) < 0) {
 			printf("\nCould not execute command..\n");
 		}
+		//printDir();
 		exit(0);
 	} else {
 		// waiting for child to terminate
@@ -135,10 +136,11 @@ void execArgsPiped(char** parsed, char** parsedpipe)
 				exit(0);
 			}
 		} else {
+			return;
 			// parent executing, waiting for two children
 			//printf("\nExecuting command");
-			//wait(NULL);
-			//wait(NULL);
+			wait(NULL);
+			wait(NULL);
 		}
 	}
 }
@@ -389,9 +391,11 @@ int ownCmdHandler(char** parsed)
 		exit(0);
 	case 2:
 		chdir(parsed[1]);
+		printDir();
 		return 1;
 	case 3:
 		openHelp();
+		printDir();
 		return 1;
 	case 4:
 		username = getenv("USER");
@@ -399,21 +403,37 @@ int ownCmdHandler(char** parsed)
 			"not a place to play around."
 			"\nUse help to know more..\n",
 			username);
+		printDir();
 		return 1;
 	case 5: 
-		if (head(parsed[1])) return 1;
+		if (head(parsed[1])){
+			return 1;
+			printDir();
+		} 
 		else return 0;
 	case 6:
-		if (removeWhiteSpace(parsed[1])) return 1;
+		if (removeWhiteSpace(parsed[1])){
+			printDir();
+			return 1;
+		} 
 		else return 0;
 	case 7:
-		if(numOfLines(parsed[1])) return 1;
+		if(numOfLines(parsed[1])){
+			printDir();
+			return 1;
+		} 
 		else return 0;
 	case 8:
-		if(showUncommented(parsed[1]))	return 1;
+		if(showUncommented(parsed[1])){
+			printDir();
+			return 1;
+		}	
 		else return 0;
 	case 9:
-		if(mostFrequentWord(parsed[1]))	return 1;
+		if(mostFrequentWord(parsed[1])){
+			printDir();
+			return 1;
+		}	
 		else return 0;
 	default:
 		break;
@@ -516,15 +536,19 @@ int processString(char* str, char** parsed, char** parsedpipe)
 void handle_signals(int signo) {
   if (signo == SIGINT) {
     printf("\n");
+	printDir();
     siglongjmp(ctrlc_buf, 1);
-  }
+	
 }
+  }
+	
 
 int main()
 {
 	char inputString[MAXCOM], *parsedArgs[MAXLIST];
 	char* parsedArgsPiped[MAXLIST];
 	int execFlag = 0;
+	int ispiped = 0;
 	welcome_shell();
 	//signal(SIGINT, sigintHandler);
 	if (signal(SIGINT, handle_signals) == SIG_ERR) {
@@ -533,25 +557,39 @@ int main()
 	// we'll use the following loop for managing ctrl+c signaling 
 	while (1) {
 		while ( sigsetjmp( ctrlc_buf, 1 ) != 0 );
+
 		// print shell line
-		printDir();
+		
+		//if(!(ispiped))
+		//	printDir();
 		// take input
-		if (takeInput(inputString))
-			continue;
-		// process
-		execFlag = processString(inputString,
-		parsedArgs, parsedArgsPiped);
-		// execflag returns zero if there is no command
-		// or it is a builtin command,
-		// 1 if it is a simple command
-		// 2 if it is including a pipe.
+		if (!(takeInput(inputString))){
+			// process
+			execFlag = processString(inputString,
+			parsedArgs, parsedArgsPiped);
+			// execflag returns zero if there is no command
+			// or it is a builtin command,
+			// 1 if it is a simple command
+			// 2 if it is including a pipe.
 
-		// execute
-		if (execFlag == 1)
-			execArgs(parsedArgs);
+			// execute
+			if (execFlag == 1){
+				execArgs(parsedArgs);
+				printDir();
+			}
 
-		if (execFlag == 2)
-			execArgsPiped(parsedArgs, parsedArgsPiped);
+				
+
+			if (execFlag == 2){
+				
+				execArgsPiped(parsedArgs, parsedArgsPiped);
+				printDir();
+				//ispiped = 1;
+			}
+				
+		}
+			//ispiped = 0;
+		
 	}
 	return 0;
 }
