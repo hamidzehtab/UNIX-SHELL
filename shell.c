@@ -42,12 +42,12 @@ void welcome_shell()
 int takeInput(char* str)
 {
 	char* buf;
-	//char cwd[1024];
-	//getcwd(cwd, sizeof(cwd));
-	//char temp[2048];
-	//snprintf(temp, sizeof(temp), "%s$ ", cwd);
+	char cwd[1024];
+	getcwd(cwd, sizeof(cwd));
+	char temp[2048];
+	snprintf(temp, sizeof(temp), "%s$ ", cwd);
 	//= printf("\nDir: %s$ ", cwd);
-	buf = readline(" ");
+	buf = readline(temp);
 	if (strlen(buf) != 0) {
 		add_history(buf);
 		strcpy(str, buf);
@@ -138,7 +138,6 @@ void execArgsPiped(char** parsed, char** parsedpipe)
 		} else {
 			//return;
 			//kill(p1, SIGKILL);
-			
 			// parent executing, waiting for two children
 			//printf("\nExecuting command");
 			wait(NULL);
@@ -394,11 +393,11 @@ int ownCmdHandler(char** parsed)
 		exit(0);
 	case 2:
 		chdir(parsed[1]);
-		printDir();
+		//printDir();
 		return 1;
 	case 3:
 		openHelp();
-		printDir();
+		////printDir();
 		return 1;
 	case 4:
 		username = getenv("USER");
@@ -406,35 +405,35 @@ int ownCmdHandler(char** parsed)
 			"not a place to play around."
 			"\nUse help to know more..\n",
 			username);
-		printDir();
+		//printDir();
 		return 1;
 	case 5: 
 		if (head(parsed[1])){
 			return 1;
-			printDir();
+			//printDir();
 		} 
 		else return 0;
 	case 6:
 		if (removeWhiteSpace(parsed[1])){
-			printDir();
+			//printDir();
 			return 1;
 		} 
 		else return 0;
 	case 7:
 		if(numOfLines(parsed[1])){
-			printDir();
+			//printDir();
 			return 1;
 		} 
 		else return 0;
 	case 8:
 		if(showUncommented(parsed[1])){
-			printDir();
+			//printDir();
 			return 1;
 		}	
 		else return 0;
 	case 9:
 		if(mostFrequentWord(parsed[1])){
-			printDir();
+			//printDir();
 			return 1;
 		}	
 		else return 0;
@@ -539,7 +538,7 @@ int processString(char* str, char** parsed, char** parsedpipe)
 void handle_signals(int signo) {
   if (signo == SIGINT) {
     printf("\n");
-	printDir();
+	//printDir();
     siglongjmp(ctrlc_buf, 1);
 	
 }
@@ -578,7 +577,7 @@ int main()
 			// execute
 			if (execFlag == 1){
 				execArgs(parsedArgs);
-				printDir();
+				//printDir();
 			}
 
 				
@@ -586,13 +585,14 @@ int main()
 			if (execFlag == 2){
 				
 				execArgsPiped(parsedArgs, parsedArgsPiped);
-				printDir();
+				//printDir();
 				//ispiped = 1;
 			}
 				
-		}else printDir();
+		}//else printDir();
 			//ispiped = 0;
 		
 	}
 	return 0;
 }
+
