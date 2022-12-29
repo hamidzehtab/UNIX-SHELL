@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <setjmp.h>
+#include <ctype.h>
 
 
 #define MAXCOM 1000 // max number of letters to be supported
@@ -218,6 +219,25 @@ int numOfLines(char parsed[])
 		return 1;
 }
 
+void printFirstWord(char content[])
+{
+    int i;
+	
+    for (i = 0; i <  strlen(content); i++)
+    {
+		//char temp[100];
+        if (isalpha(content[i]))
+            printf("%c", content[i]);
+
+        if (content[i] == ' '){
+			printf("\n");
+			break;
+		}
+    }
+
+
+}
+
 int head (char parsed[])
 {
 	FILE *myfile;
@@ -331,6 +351,39 @@ int removeWhiteSpace(char parsed[])
 		return 1;
 }
 
+int firstWordsOfLines(char parsed[])
+{
+	FILE *mfile1;
+	int counter = 0, i, j;
+	char line[200],c;
+	// Open file
+	mfile1 = fopen(parsed, "r");
+	if (mfile1 == NULL)
+	{
+		fprintf(stderr, "Cannot open file: %s \n", strerror(errno));
+		exit(0);
+	}
+	// Extract characters from file and store in character c
+	for (c = getc(mfile1); c != EOF; c = getc(mfile1))
+		if (c == '\n') // Increment count if this character is newline
+			counter = counter + 1;
+	fclose(mfile1);
+	//FILE *mfile;
+	mfile1 = fopen(parsed, "r");
+	fgets(line, 200, mfile1);
+	printFirstWord(line);
+	//printf("first line %s\n", line);
+	//while (line != EOF || feof(mfile))
+	for ( i = 0; i < counter; i++)
+	
+	{
+		fgets(line, 200, mfile1);
+		printFirstWord(line);
+	}
+	fclose(mfile1);
+	return 1;
+}
+
 int showUncommented(char parsed[])
 {
 	FILE *mfile;
@@ -366,7 +419,7 @@ int showUncommented(char parsed[])
 // Function to execute builtin commands
 int ownCmdHandler(char** parsed)
 {
-	int NoOfOwnCmds = 9, i, switchOwnArg = 0;
+	int NoOfOwnCmds = 10, i, switchOwnArg = 0;
 	char* ListOfOwnCmds[NoOfOwnCmds];
 	char* username;
 
@@ -379,6 +432,7 @@ int ownCmdHandler(char** parsed)
 	ListOfOwnCmds[6] = "nl";
 	ListOfOwnCmds[7] = "suc";
 	ListOfOwnCmds[8] = "mfw";
+	ListOfOwnCmds[9] = "fw";
 
 	for (i = 0; i < NoOfOwnCmds; i++) {
 		if (strcmp(parsed[0], ListOfOwnCmds[i]) == 0) {
@@ -436,6 +490,9 @@ int ownCmdHandler(char** parsed)
 			//printDir();
 			return 1;
 		}	
+		else return 0;
+	case 10:
+		if(firstWordsOfLines(parsed[1])) return 1;
 		else return 0;
 	default:
 		break;
@@ -544,7 +601,6 @@ void handle_signals(int signo) {
 }
   }
 	
-
 int main()
 {
 	char inputString[MAXCOM], *parsedArgs[MAXLIST];
