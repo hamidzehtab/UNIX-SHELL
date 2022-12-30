@@ -37,7 +37,7 @@ Specific Commands :
 -> returns the string which is the most repeated
 
 6-fw : FirstWordofLines
--> returns the beginning of every text file which is seprated by space from the rest of the line 
+-> returns the beginning of every text file which is seprated by space from the rest of the line   
 
 
 
