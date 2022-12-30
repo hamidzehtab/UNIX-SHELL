@@ -178,10 +178,18 @@ void cisshPipe(char **command1, char **command2)
 // Help command builtin
 void openHelp()
 {
-	puts("\n***WELCOME TO MY SHELL HELP***"
-		"\nCopyright @ Suprotik Dey"
-		"\n-Use the shell at your own risk..."
+	puts("\n***WELCOME TO OUR SHELL HELP***"
+		"\n eveloped By :
+    	Ali.M Tabatabaee (Ali Ninja)
+    	Hamid Zehtab     (The Honey Badger) "
+		"\n-Use the shell and enjoy it ... :) :) "
 		"\nList of Commands supported:"
+		"\n>head -> shows the first 10 lines of each file
+"
+		"\n>rws"
+		"\n>suc"
+		"\n>mfw"
+		"\n>fw"
 		"\n>cd"
 		"\n>ls"
 		"\n>exit"
