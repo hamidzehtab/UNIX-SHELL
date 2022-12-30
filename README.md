@@ -19,9 +19,10 @@ Run an instance of the program :
 ./a.out
 
 Specific Commands :
+
 1-nl 'name of the file'  : (number of lines ) this command will return the number of lines in the given file 
 
-2-rws 'name of the file' : (remove white spaces) this command will remove all the white spaces in hte given file and print the result in the bash.
+2-rws 'name of the file' : (remove white spaces) this command will remove all the white spaces in the given file and print the result in the shell.
 
 3-suc 'name of the file' : (show uncommented) will print out all the lines in the file that are not commented 
 
